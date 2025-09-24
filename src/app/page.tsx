@@ -1,18 +1,64 @@
-import Image from "next/image";
+import { PageLayout } from "@/components/layout/page-layout";
+import { HomeSidebar } from "@/components/layout/sidebar/home-sidebar";
+import { LatestProductCard } from "@/components/products/latest-product-card";
+import { Badge } from "@/components/ui/badge";
 
-export default function Home() {
+import { getCollections, getProducts } from "@/lib/ecommerce";
+import { getCollectionProducts } from "@/lib/ecommerce/ecommerce";
+import { FormattedProduct } from "@/lib/ecommerce/types-sample";
+import { getLabelPosition } from "@/lib/utils";
+
+export default async function Home() {
+  const collections = await getCollections();
+  let featuredProducts: FormattedProduct[] | null = null;
+
+  try {
+    if (collections.length > 0) {
+      featuredProducts = await getCollectionProducts({
+        collection: collections[0].handle,
+      });
+    } else {
+      const allProducts = await getProducts({});
+      featuredProducts = allProducts.slice(0, 8);
+    }
+  } catch (error) {
+    console.error("Error fetching featured products:", error);
+    featuredProducts = [];
+  }
+  const [lastProduct, ...restProducts] = featuredProducts;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/forli-logo.png"
-          alt="Forli logo"
-          width={180}
-          height={38}
-          priority
-        />
-      </main>
-    </div>
+    <PageLayout>
+      <div className="contents md:grid md:grid-cols-12 md:gap-sides">
+        <HomeSidebar collections={collections} />
+        <div className="flex relative flex-col grid-cols-2 col-span-8 w-full md:grid">
+          <div className="fixed top-0 left-0 z-10 w-full pointer-events-none base-grid py-sides">
+            <div className="col-span-8 col-start-5">
+              <div className="hidden px-6 lg:block">
+                <Badge variant="outline-secondary">latest drop</Badge>
+              </div>
+            </div>
+          </div>
+          {featuredProducts.length > 0 && (
+            <>
+              <LatestProductCard
+                className="col-span-2"
+                product={lastProduct}
+                principal
+              />
+
+              {restProducts.map((product, index: number) => (
+                <LatestProductCard
+                  className="col-span-1"
+                  key={product.id}
+                  product={product}
+                  labelPosition={getLabelPosition(index)}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    </PageLayout>
   );
 }

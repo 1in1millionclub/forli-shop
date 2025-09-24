@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Collection } from "@/lib/ecommerce/types-sample";
 import { useBodyScrollLock } from "@/lib/hooks/use-body-scroll-lock";
-import { Collection } from "@/lib/supabase/types-sample";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

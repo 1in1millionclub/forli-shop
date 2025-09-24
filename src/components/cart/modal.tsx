@@ -1,14 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { Cart } from "@/lib/ecommerce/types-sample";
+import { formatPrice } from "@/lib/ecommerce/utils";
 import { useBodyScrollLock } from "@/lib/hooks/use-body-scroll-lock";
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PlusCircleIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { Loader } from "../ui/loader";
+import { useCart } from "./cart-context";
+import { CartItemCard } from "./cart-item";
 
 const CartContainer = ({
   children,
@@ -21,9 +27,9 @@ const CartContainer = ({
 };
 
 const CartItems = ({ closeCart }: { closeCart: () => void }) => {
-  // const { cart } = useCart();
+  const { cart } = useCart();
 
-  // if (!cart) return <></>;
+  if (!cart) return <></>;
 
   return (
     <div className="flex flex-col justify-between h-full overflow-hidden">
@@ -32,20 +38,20 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
         {/* <span>{cart.lines.length} items</span> */}
       </CartContainer>
       <div className="relative flex-1 min-h-0 py-4 overflow-x-hidden">
-        {/* <CartContainer className="overflow-y-auto flex flex-col gap-y-3 h-full scrollbar-hide">
+        <CartContainer className="overflow-y-auto flex flex-col gap-y-3 h-full scrollbar-hide">
           <AnimatePresence>
-            {cart.lines.map(item => (
+            {cart.lines.map((item: any) => (
               <motion.div
                 key={item.merchandise.id}
                 layout
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <CartItemCard item={item} onCloseCart={closeCart} />
               </motion.div>
             ))}
           </AnimatePresence>
-        </CartContainer> */}
+        </CartContainer>
       </div>
       <CartContainer>
         <div className="py-4 text-sm text-foreground/50 shrink-0">
@@ -60,7 +66,10 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
           <div className="flex justify-between items-center pt-1 pb-1 mb-1.5 text-lg font-semibold">
             <p>Total</p>
             <p className="text-base text-right text-foreground">
-              {/* {formatPrice(cart.cost.totalAmount.amount, cart.cost.totalAmount.currencyCode)} */}
+              {formatPrice(
+                cart.cost.totalAmount.amount,
+                cart.cost.totalAmount.currencyCode
+              )}
             </p>
           </div>
         </div>
@@ -70,39 +79,39 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
   );
 };
 
-// const serializeCart = (cart: Cart) => {
-//   return JSON.stringify(
-//     cart.lines.map(line => ({
-//       merchandiseId: line.merchandise.id,
-//       quantity: line.quantity,
-//     }))
-//   );
-// };
+const serializeCart = (cart: Cart) => {
+  return JSON.stringify(
+    cart.lines.map((line) => ({
+      merchandiseId: line.merchandise.id,
+      quantity: line.quantity,
+    }))
+  );
+};
 
 export default function CartModal() {
-  // const { isPending, cart } = useCart();
+  const { isPending, cart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
-  // const serializedCart = useRef(cart ? serializeCart(cart) : undefined);
+  const serializedCart = useRef(cart ? serializeCart(cart) : undefined);
 
   useBodyScrollLock(isOpen);
 
-  // useEffect(() => {
-  //   if (!cart || isPending) return;
+  useEffect(() => {
+    if (!cart || isPending) return;
 
-  //   // const newSerializedCart = serializeCart(cart);
+    const newSerializedCart = serializeCart(cart);
 
-  //   // Initialize on first load
-  //   if (serializedCart.current === undefined) {
-  //     serializedCart.current = newSerializedCart;
-  //     return;
-  //   }
+    // Initialize on first load
+    if (serializedCart.current === undefined) {
+      serializedCart.current = newSerializedCart;
+      return;
+    }
 
-  //   // Only open cart if items were actually added/changed
-  //   if (serializedCart.current !== newSerializedCart) {
-  //     serializedCart.current = newSerializedCart;
-  //     setIsOpen(true);
-  //   }
-  // }, [cart, isPending]);
+    // Only open cart if items were actually added/changed
+    if (serializedCart.current !== newSerializedCart) {
+      serializedCart.current = newSerializedCart;
+      setIsOpen(true);
+    }
+  }, [cart, isPending]);
 
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -123,31 +132,35 @@ export default function CartModal() {
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
 
-  // const renderCartContent = () => {
-  //   if (!cart || cart.lines.length === 0) {
-  //     return (
-  //       <CartContainer className="flex w-full">
-  //         <Link
-  //           href="/shop"
-  //           className="p-2 w-full rounded-lg border border-dashed bg-background border-border"
-  //           onClick={closeCart}
-  //         >
-  //           <div className="flex flex-row gap-6">
-  //             <div className="flex overflow-hidden relative justify-center items-center rounded-sm border border-dashed size-20 shrink-0 border-border">
-  //               <PlusCircleIcon className="size-6 text-muted-foreground" />
-  //             </div>
-  //             <div className="flex flex-col flex-1 gap-2 justify-center 2xl:gap-3">
-  //               <span className="text-lg font-semibold 2xl:text-xl">Cart is empty</span>
-  //               <p className="text-sm text-muted-foreground hover:underline">Start shopping to get started</p>
-  //             </div>
-  //           </div>
-  //         </Link>
-  //       </CartContainer>
-  //     );
-  //   }
+  const renderCartContent = () => {
+    if (!cart || cart.lines.length === 0) {
+      return (
+        <CartContainer className="flex w-full">
+          <Link
+            href="/shop"
+            className="p-2 w-full rounded-lg border border-dashed bg-background border-border"
+            onClick={closeCart}
+          >
+            <div className="flex flex-row gap-6">
+              <div className="flex overflow-hidden relative justify-center items-center rounded-sm border border-dashed size-20 shrink-0 border-border">
+                <PlusCircleIcon className="size-6 text-muted-foreground" />
+              </div>
+              <div className="flex flex-col flex-1 gap-2 justify-center 2xl:gap-3">
+                <span className="text-lg font-semibold 2xl:text-xl">
+                  Cart is empty
+                </span>
+                <p className="text-sm text-muted-foreground hover:underline">
+                  Start shopping to get started
+                </p>
+              </div>
+            </div>
+          </Link>
+        </CartContainer>
+      );
+    }
 
-  //   return <CartItems closeCart={closeCart} />;
-  // };
+    return <CartItems closeCart={closeCart} />;
+  };
 
   return (
     <>
@@ -157,7 +170,7 @@ export default function CartModal() {
         className="uppercase"
         size={"sm"}
       >
-        {/* <span className="max-md:hidden">cart</span> ({cart?.totalQuantity || 0}) */}
+        <span className="max-md:hidden">cart</span> ({cart?.totalQuantity || 0})
       </Button>
       <AnimatePresence>
         {isOpen && (
@@ -194,7 +207,7 @@ export default function CartModal() {
                   </Button>
                 </CartContainer>
 
-                {/* {renderCartContent()} */}
+                {renderCartContent()}
               </div>
             </motion.div>
           </>
@@ -206,25 +219,25 @@ export default function CartModal() {
 
 function CheckoutButton() {
   const { pending } = useFormStatus();
-  // const { cart, isPending } = useCart();
+  const { cart, isPending } = useCart();
   const router = useRouter();
 
-  // const checkoutUrl = cart?.checkoutUrl;
+  const checkoutUrl = cart?.checkoutUrl;
 
   const isLoading = pending;
-  // const isDisabled = !checkoutUrl || isPending;
+  const isDisabled = !checkoutUrl || isPending;
 
   return (
     <Button
       type="submit"
-      // disabled={isDisabled}
+      disabled={isDisabled}
       size="lg"
       className="flex relative gap-3 justify-between items-center w-full"
-      // onClick={() => {
-      //   if (checkoutUrl) {
-      //     router.push(checkoutUrl);
-      //   }
-      // }}
+      onClick={() => {
+        if (checkoutUrl) {
+          router.push(checkoutUrl);
+        }
+      }}
     >
       <AnimatePresence initial={false} mode="wait">
         <motion.div

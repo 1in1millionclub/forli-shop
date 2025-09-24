@@ -1,60 +1,38 @@
-export interface ShopifyProduct {
+export interface FormattedProduct {
   id: string;
   title: string;
   description: string;
   descriptionHtml: string;
   handle: string;
+  featuredImage: Image;
+  availableForSale: boolean;
   productType: string; // For category-like filtering (available in tokenless)
-  category?: {
+  category: {
     id: string;
     name: string;
-  }; // Shopify's Standard Product Taxonomy category
-  options: Array<{
-    id: string;
-    name: string;
-    values: string[];
-  }>; // Direct product options (Color, Size, etc.)
-  images: {
-    edges: Array<{
-      node: {
-        url: string;
-        altText: string;
-        thumbhash?: string;
-      };
-    }>;
-  };
+  }; // Linked category if exists
+  options: ProductOption[]; // Direct product options (Color, Size, etc.)
+  images: Image[];
   priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
+    maxVariantPrice: Money;
+    minVariantPrice: Money;
   };
+  tags: string[];
   compareAtPriceRange: {
     minVariantPrice: {
       amount: string;
       currencyCode: string;
     };
   };
-  variants: {
-    edges: Array<{
-      node: {
-        id: string;
-        title: string;
-        price: {
-          amount: string;
-          currencyCode: string;
-        };
-        availableForSale: boolean;
-        selectedOptions?: Array<{
-          name: string;
-          value: string;
-        }>;
-      };
-    }>;
-  };
+  variants: ProductVariant[];
+  categoryId?: string;
+  currencyCode: string;
+
+  compareAtPrice?: Money;
+  seo: SEO;
 }
 
-export interface ShopifyCollection {
+export interface FormattedCollection {
   id: string;
   title: string;
   handle: string;
@@ -65,7 +43,7 @@ export interface ShopifyCollection {
   };
 }
 
-export interface ShopifyCartLine {
+export interface FormattedCartLine {
   id: string;
   quantity: number;
   merchandise: {
@@ -83,22 +61,16 @@ export interface ShopifyCartLine {
       title: string;
       handle: string;
       images: {
-        edges: Array<{
-          node: {
-            url: string;
-            altText: string;
-            thumbhash?: string;
-          };
-        }>;
+        edges: Image[];
       };
     };
   };
 }
 
-export interface ShopifyCart {
+export interface FormattedCart {
   id: string;
   lines: {
-    edges: Array<{ node: ShopifyCartLine }>;
+    edges: Array<{ node: FormattedCartLine }>;
   };
   cost: {
     totalAmount: {
@@ -131,27 +103,27 @@ export type Collection = {
   path: string;
 };
 
-export type Product = {
-  id: string;
-  title: string;
-  handle: string;
-  categoryId?: string;
-  description: string;
-  descriptionHtml: string;
-  featuredImage: Image;
-  currencyCode: string;
-  priceRange: {
-    maxVariantPrice: Money;
-    minVariantPrice: Money;
-  };
-  compareAtPrice?: Money;
-  seo: SEO;
-  options: ProductOption[];
-  tags: string[];
-  variants: ProductVariant[];
-  images: Image[];
-  availableForSale: boolean;
-};
+// export type Product = {
+//   id: string;
+//   title: string;
+//   handle: string;
+//   categoryId?: string;
+//   description: string;
+//   descriptionHtml: string;
+//   featuredImage: Image;
+//   currencyCode: string;
+//   priceRange: {
+//     maxVariantPrice: Money;
+//     minVariantPrice: Money;
+//   };
+//   compareAtPrice?: Money;
+//   seo: SEO;
+//   options: ProductOption[];
+//   tags: string[];
+//   variants: ProductVariant[];
+//   images: Image[];
+//   availableForSale: boolean;
+// };
 
 export type ProductSortKey =
   | "RELEVANCE"
@@ -200,7 +172,6 @@ export type Money = {
   amount: string;
   currencyCode: string;
 };
-
 export type Image = {
   url: string;
   altText: string;
@@ -209,7 +180,6 @@ export type Image = {
   selectedOptions?: SelectedOptions;
   thumbhash?: string;
 };
-
 export type SEO = {
   title: string;
   description: string;
@@ -239,11 +209,11 @@ export type CartItem = {
     id: string;
     title: string;
     selectedOptions: SelectedOptions;
-    product: Product;
+    product: FormattedProduct;
   };
 };
 
-export type CartProduct = Product;
+export type CartProduct = FormattedProduct;
 
 // Menu and page types for static content
 export type Menu = {

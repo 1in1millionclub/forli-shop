@@ -1,14 +1,19 @@
-import { Database as DB } from "@/lib/supabase/database.types";
+import { Database as DB } from "@/lib/database.types";
 declare global {
   type Database = DB;
-  // type ForliDesigns = DB["public"]["Tables"]["forli.designs"]["Row"];
-  // type Product = DB["public"]["Tables"]["products"]["Row"];
-  // type ProductSize = DB["public"]["Tables"]["product_sizes"]["Row"];
-  // type ProductImage = DB["public"]["Tables"]["product_images"]["Row"];
-  // type Address = DB["public"]["Tables"]["addresses"]["Row"];
-  // type Order = DB["public"]["Tables"]["orders"]["Row"];
-  // type OrderItem = DB["public"]["Tables"]["order_items"]["Row"];
-  // type Transaction = DB["public"]["Tables"]["transactions"]["Row"];
-  // type Profile = DB["public"]["Tables"]["profiles"]["Row"];
-  // type Json = DB["public"]["Functions"]["json"]["Returns"];
+  type SupabaseCartItem = DB["public"]["Tables"]["cart_items"]["Row"];
+  type SupabaseCart = DB["public"]["Tables"]["carts"]["Row"];
+  type SupabaseCategory = DB["public"]["Tables"]["categories"]["Row"];
+  type SupabaseCollectionProduct =
+    DB["public"]["Tables"]["collection_products"]["Row"];
+  type SupabaseCollection = DB["public"]["Tables"]["collections"]["Row"];
+  type SupabaseProductImage = DB["public"]["Tables"]["product_images"]["Row"];
+  type SupabaseProductOptionValue =
+    DB["public"]["Tables"]["product_option_values"]["Row"];
+  type SupabaseProductOption = DB["public"]["Tables"]["product_options"]["Row"];
+  type SupabaseProductVariant =
+    DB["public"]["Tables"]["product_variants"]["Row"];
+  type SupabaseProduct = DB["public"]["Tables"]["products"]["Row"];
+  type SupabaseVariantSelectedOption =
+    DB["public"]["Tables"]["variant_selected_options"]["Row"];
 }

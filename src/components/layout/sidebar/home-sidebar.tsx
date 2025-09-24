@@ -1,4 +1,4 @@
-import { Collection } from "@/lib/supabase/types-sample";
+import { Collection } from "@/lib/ecommerce/types-sample";
 import { ShopLinks } from "../shop-links";
 
 interface HomeSidebarProps {

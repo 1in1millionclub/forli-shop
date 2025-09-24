@@ -1,7 +1,7 @@
 "use client";
 
 import CartModal from "@/components/cart/modal";
-import { Collection } from "@/lib/supabase/types-sample";
+import { Collection } from "@/lib/ecommerce/types-sample";
 import { NavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
