@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Cart } from "@/lib/ecommerce/types-sample";
@@ -40,9 +39,9 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
       <div className="relative flex-1 min-h-0 py-4 overflow-x-hidden">
         <CartContainer className="overflow-y-auto flex flex-col gap-y-3 h-full scrollbar-hide">
           <AnimatePresence>
-            {cart.lines.map((item: any) => (
+            {cart.lines.map((item) => (
               <motion.div
-                key={item.merchandise.id}
+                key={item.id}
                 layout
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}

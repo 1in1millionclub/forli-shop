@@ -16,16 +16,18 @@ export const ProductImage = ({ product }: { product: FormattedProduct }) => {
   );
 
   return (
-    <Image
-      src={variantImage.url}
-      alt={product.title}
-      width={variantImage.width}
-      height={variantImage.height}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      className="object-cover size-full"
-      quality={100}
-      placeholder={variantImage?.thumbhash ? "blur" : undefined}
-      blurDataURL={variantImage?.thumbhash}
-    />
+    variantImage.url && (
+      <Image
+        src={variantImage.url}
+        alt={product.title}
+        width={variantImage.width}
+        height={variantImage.height}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="object-cover size-full"
+        quality={100}
+        placeholder={variantImage?.thumbhash ? "blur" : undefined}
+        blurDataURL={variantImage?.thumbhash}
+      />
+    )
   );
 };

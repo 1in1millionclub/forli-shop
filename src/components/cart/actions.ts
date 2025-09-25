@@ -15,6 +15,7 @@ import {
   FormattedCart,
   FormattedCartLine,
 } from "@/lib/ecommerce/types-sample";
+import { supabase } from "@/utils/supabase/normal";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -110,6 +111,15 @@ function adaptCart(supabaseCart: FormattedCart | null): Cart | null {
 
 async function getOrCreateCartId(): Promise<string> {
   let cartId = (await cookies()).get("cartId")?.value;
+  console.log(cartId);
+  if (cartId) {
+    const { data: supabaseCartID } = await supabase
+      .from("carts")
+      .select("id")
+      .eq("id", cartId)
+      .single();
+    if (!supabaseCartID) cartId = undefined;
+  }
   if (!cartId) {
     const newCart = await createSupabaseCart();
     cartId = newCart.id;
@@ -192,11 +202,11 @@ export async function createCartAndSetCookie() {
 export async function getCart(): Promise<Cart | null> {
   try {
     const cartId = (await cookies()).get("cartId")?.value;
-
     if (!cartId) {
       return null;
     }
     const fresh = await getSupabaseCart(cartId);
+
     return adaptCart(fresh);
   } catch (error) {
     console.error("Error fetching cart:", error);

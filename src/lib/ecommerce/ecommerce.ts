@@ -194,11 +194,11 @@ export async function getProducts({
   let request = productsWithRelationsQuery.limit(first);
 
   // Sorting
-  if (sortKey) {
-    request = request.order(sortKey.toLowerCase(), { ascending: !reverse });
-  } else {
-    request = request.order("created_at", { ascending: !reverse });
-  }
+  // if (sortKey) {
+  //   request = request.order(sortKey.toLowerCase(), { ascending: !reverse });
+  // } else {
+  //   request = request.order("created_at", { ascending: !reverse });
+  // }
 
   // Basic search filter
   if (searchQuery) {
@@ -291,11 +291,11 @@ export async function getCollectionProducts({
     .limit(limit);
   // You would need more advanced sorting logic here
   // For now, let's just apply a simple sort on the product table
-  if (sortKey) {
-    request = request.order(`products->>${sortKey.toLowerCase()}`, {
-      ascending: !reverse,
-    });
-  }
+  // if (sortKey) {
+  //   request = request.order(`products->>${sortKey.toLowerCase()}`, {
+  //     ascending: !reverse,
+  //   });
+  // }
 
   if (searchQuery) {
     request = request.ilike("products->>title", `%${searchQuery}%`);
@@ -350,7 +350,6 @@ export async function addCartLines(
     variant_id: line.merchandiseId,
     quantity: line.quantity,
   }));
-
   const { error } = await supabase.from("cart_items").insert(items);
 
   if (error) {
@@ -413,7 +412,6 @@ export async function getCart(cartId: string) {
     .single();
 
   if (error) {
-    console.error("Supabase getCart error:", error);
     if (error.code === "PGRST116") {
       // No rows found
       return null;

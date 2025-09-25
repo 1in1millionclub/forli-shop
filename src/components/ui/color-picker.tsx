@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import * as React from "react";
 
 export interface Color {
   name: string;
@@ -10,36 +10,42 @@ interface ColorSwatchProps {
   color: Color | [Color, Color];
   isSelected: boolean;
   onColorChange: (color: Color | [Color, Color]) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   atLeastOneColorSelected: boolean;
 }
 
 export const sizeClasses = {
-  sm: 'size-6',
-  md: 'size-8',
-  lg: 'size-10',
+  sm: "size-6",
+  md: "size-8",
+  lg: "size-10",
 };
 
 export function ColorSwatch({
   color,
   isSelected,
   onColorChange,
-  size = 'md',
+  size = "md",
   atLeastOneColorSelected,
 }: ColorSwatchProps) {
   const isDualColor = Array.isArray(color);
-  const displayName = isDualColor ? `${color[0].name} & ${color[1].name}` : color.name;
+  const displayName = isDualColor
+    ? `${color[0].name} & ${color[1].name}`
+    : color.name;
+  const [isClient, setIsClient] = React.useState(false);
 
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
   return (
     <button
       className={cn(
-        'rounded-full ring ring-accent cursor-pointer transition-[outline,box-shadow,opacity] relative overflow-hidden',
+        "rounded-full ring ring-accent cursor-pointer transition-[outline,box-shadow,opacity] relative overflow-hidden",
         sizeClasses[size],
         isSelected
-          ? 'ring-2 opacity-100 ring-primary/80'
+          ? "ring-2 opacity-100 ring-primary/80"
           : atLeastOneColorSelected
-            ? 'opacity-40 hover:ring-primary/30 hover:opacity-70'
-            : 'opacity-100'
+          ? "opacity-40 hover:ring-primary/30 hover:opacity-70"
+          : "opacity-100"
       )}
       title={displayName}
       onClick={() => onColorChange(color)}
@@ -49,12 +55,21 @@ export function ColorSwatch({
       {isDualColor ? (
         <>
           {/* Left half */}
-          <div className="absolute top-0 left-0 w-1/2 h-full" style={{ backgroundColor: color[0].value }} />
+          <div
+            className="absolute top-0 left-0 w-1/2 h-full"
+            style={{ backgroundColor: color[0].value }}
+          />
           {/* Right half */}
-          <div className="absolute top-0 right-0 w-1/2 h-full" style={{ backgroundColor: color[1].value }} />
+          <div
+            className="absolute top-0 right-0 w-1/2 h-full"
+            style={{ backgroundColor: color[1].value }}
+          />
         </>
       ) : (
-        <div className="w-full h-full" style={{ backgroundColor: color.value }} />
+        <div
+          className="w-full h-full"
+          style={{ backgroundColor: color.value }}
+        />
       )}
       <span className="sr-only">{displayName}</span>
     </button>
@@ -65,18 +80,27 @@ interface ColorPickerProps {
   colors: (Color | [Color, Color])[];
   selectedColors: (Color | [Color, Color])[];
   onColorChange: (color: Color | [Color, Color]) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export function ColorPicker({ colors, selectedColors, onColorChange, size = 'md', className }: ColorPickerProps) {
+export function ColorPicker({
+  colors,
+  selectedColors,
+  onColorChange,
+  size = "md",
+  className,
+}: ColorPickerProps) {
   const atLeastOneColor = selectedColors.length > 0;
 
   // Helper function to compare colors for selection state
   const isColorSelected = (color: Color | [Color, Color]) => {
-    return selectedColors.some(selectedColor => {
+    return selectedColors.some((selectedColor) => {
       if (Array.isArray(color) && Array.isArray(selectedColor)) {
-        return color[0].value === selectedColor[0].value && color[1].value === selectedColor[1].value;
+        return (
+          color[0].value === selectedColor[0].value &&
+          color[1].value === selectedColor[1].value
+        );
       } else if (!Array.isArray(color) && !Array.isArray(selectedColor)) {
         return color.value === selectedColor.value;
       }
@@ -85,10 +109,14 @@ export function ColorPicker({ colors, selectedColors, onColorChange, size = 'md'
   };
 
   return (
-    <div className={cn('flex flex-wrap gap-1.5', className)}>
-      {colors.map(color => (
+    <div className={cn("flex flex-wrap gap-1.5", className)}>
+      {colors.map((color) => (
         <div
-          key={Array.isArray(color) ? `${color[0].value}-${color[1].value}` : color.value}
+          key={
+            Array.isArray(color)
+              ? `${color[0].value}-${color[1].value}`
+              : color.value
+          }
           className={sizeClasses[size]}
         >
           <ColorSwatch
