@@ -7,9 +7,9 @@ export interface Color {
 }
 
 interface ColorSwatchProps {
-  color: Color | [Color, Color];
+  color: Color;
   isSelected: boolean;
-  onColorChange: (color: Color | [Color, Color]) => void;
+  onColorChange: (color: Color) => void;
   size?: "sm" | "md" | "lg";
   atLeastOneColorSelected: boolean;
 }
@@ -27,10 +27,7 @@ export function ColorSwatch({
   size = "md",
   atLeastOneColorSelected,
 }: ColorSwatchProps) {
-  const isDualColor = Array.isArray(color);
-  const displayName = isDualColor
-    ? `${color[0].name} & ${color[1].name}`
-    : color.name;
+  const displayName = color.name;
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -52,34 +49,16 @@ export function ColorSwatch({
       aria-pressed={isSelected}
       aria-label={`Select color: ${displayName}`}
     >
-      {isDualColor ? (
-        <>
-          {/* Left half */}
-          <div
-            className="absolute top-0 left-0 w-1/2 h-full"
-            style={{ backgroundColor: color[0].value }}
-          />
-          {/* Right half */}
-          <div
-            className="absolute top-0 right-0 w-1/2 h-full"
-            style={{ backgroundColor: color[1].value }}
-          />
-        </>
-      ) : (
-        <div
-          className="w-full h-full"
-          style={{ backgroundColor: color.value }}
-        />
-      )}
+      <div className="w-full h-full" style={{ backgroundColor: color.value }} />
       <span className="sr-only">{displayName}</span>
     </button>
   );
 }
 
 interface ColorPickerProps {
-  colors: (Color | [Color, Color])[];
-  selectedColors: (Color | [Color, Color])[];
-  onColorChange: (color: Color | [Color, Color]) => void;
+  colors: Color[];
+  selectedColors: Color[];
+  onColorChange: (color: Color) => void;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -94,7 +73,7 @@ export function ColorPicker({
   const atLeastOneColor = selectedColors.length > 0;
 
   // Helper function to compare colors for selection state
-  const isColorSelected = (color: Color | [Color, Color]) => {
+  const isColorSelected = (color: Color) => {
     return selectedColors.some((selectedColor) => {
       if (Array.isArray(color) && Array.isArray(selectedColor)) {
         return (
@@ -111,14 +90,7 @@ export function ColorPicker({
   return (
     <div className={cn("flex flex-wrap gap-1.5", className)}>
       {colors.map((color) => (
-        <div
-          key={
-            Array.isArray(color)
-              ? `${color[0].value}-${color[1].value}`
-              : color.value
-          }
-          className={sizeClasses[size]}
-        >
+        <div key={color.value} className={sizeClasses[size]}>
           <ColorSwatch
             color={color}
             isSelected={isColorSelected(color)}

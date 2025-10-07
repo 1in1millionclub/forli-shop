@@ -66,7 +66,6 @@ export function VariantOptionSelectorComponent({
         ),
       }))
     : [];
-
   const isColorOption = optionNameLowerCase === "color";
 
   return (
@@ -87,6 +86,7 @@ export function VariantOptionSelectorComponent({
                 option.values.some((val) => val.name === value)
             )
           );
+
           const isAvailableForSale = combinations.find((combination) =>
             filtered.every(
               ([key, value]) =>
@@ -97,20 +97,13 @@ export function VariantOptionSelectorComponent({
           const isActive = isTargetingProduct && selectedValue === value.name;
 
           if (isColorOption) {
-            const color = getColorHex(value.name);
             const name = value.name.split("/");
+            const color = getColorHex(value.name);
 
             return (
               <ColorSwatch
                 key={value.id}
-                color={
-                  Array.isArray(color)
-                    ? [
-                        { name: name[0], value: color[0] },
-                        { name: name[1], value: color[1] },
-                      ]
-                    : { name: name[0], value: color }
-                }
+                color={{ name: name[0], value: color }}
                 isSelected={isActive}
                 onColorChange={() => onSelect?.(value.name)}
                 size={variant === "condensed" ? "sm" : "md"}
@@ -162,7 +155,6 @@ export function VariantOptionSelector({
     "pid",
     parseAsString.withDefault("")
   );
-
   const selectedOptions = useSelectedOptions(product);
 
   const isProductPage = pathname.handle === product.handle;

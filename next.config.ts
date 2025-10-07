@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     clientSegmentCache: true,
   },
   images: {
+    qualities: [100, 75, 50, 25],
     remotePatterns: [
       {
         protocol: "https",

@@ -16,7 +16,7 @@ export const DesktopGallery = ({ product }: { product: FormattedProduct }) => {
       style={{
         aspectRatio: `${image.width} / ${image.height}`,
       }}
-      // key={`${image.url}-${image.selectedOptions?.map(o => `${o.name},${o.value}`).join('-')}`}
+      // key={`${image.}`}
       key={`${image.url}-${idx}`}
       src={image.url}
       alt={"Product image"}
@@ -24,6 +24,7 @@ export const DesktopGallery = ({ product }: { product: FormattedProduct }) => {
       height={image.height}
       className="w-full object-cover"
       quality={100}
+      priority
     />
   ));
 };

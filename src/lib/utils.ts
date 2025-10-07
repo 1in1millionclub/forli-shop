@@ -24,7 +24,7 @@ export const getLabelPosition = (
   ] as const;
   return positions[index % positions.length];
 };
-export function getColorHex(colorName: string): string | [string, string] {
+export function getColorHex(colorName: string): string {
   const lowerColorName = colorName.toLowerCase();
 
   // Check for exact match first

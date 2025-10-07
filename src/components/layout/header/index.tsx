@@ -38,7 +38,13 @@ export function Header({ collections }: HeaderProps) {
       </div>
       <Link href="/" className="md:col-span-3 xl:col-span-2" prefetch>
         {/* <LogoSvg className="w-auto h-6 max-md:place-self-center md:w-full md:h-auto max-w-96" /> */}
-        <Image src="/forli-logo.png" alt="Logo" width={120} height={24} />
+        <Image
+          src="/forli-logo.png"
+          alt="Logo"
+          width={120}
+          height={37}
+          className="h-auto w-auto"
+        />
       </Link>
       <nav className="flex gap-2 justify-end items-center md:col-span-9 xl:col-span-10">
         <ul className="items-center gap-5 py-0.5 px-3 bg-background/10 rounded-sm backdrop-blur-md hidden md:flex">

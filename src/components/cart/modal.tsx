@@ -34,7 +34,7 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
     <div className="flex flex-col justify-between h-full overflow-hidden">
       <CartContainer className="flex justify-between text-sm text-muted-foreground">
         <span>Products</span>
-        {/* <span>{cart.lines.length} items</span> */}
+        <span>{cart.lines.length} items</span>
       </CartContainer>
       <div className="relative flex-1 min-h-0 py-4 overflow-x-hidden">
         <CartContainer className="overflow-y-auto flex flex-col gap-y-3 h-full scrollbar-hide">

@@ -1,4 +1,5 @@
 import { FormattedProduct } from "@/lib/ecommerce/types-sample";
+import { formatPrice } from "@/lib/ecommerce/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -34,17 +35,24 @@ export function FeaturedProductLabel({
           {product.title}
         </Link>
         <div className="col-span-1 mb-10">
-          {/* {product.tags.length > 0 ? (
-            <p className="mb-3 text-sm italic font-medium">{product.tags.join('. ')}</p>
-          ) : null} */}
+          {product.tags.length > 0 ? (
+            <p className="mb-3 text-sm italic font-medium">
+              {product.tags.join(". ")}
+            </p>
+          ) : null}
           <p className="text-sm font-medium line-clamp-3">
             {product.description}
           </p>
         </div>
         <div className="flex col-span-1 gap-3 items-center text-2xl font-semibold md:self-end">
-          {/* ${Number(product.priceRange.minVariantPrice.amount)} */}
+          {formatPrice(
+            product.priceRange.minVariantPrice.amount,
+            product.priceRange.minVariantPrice.currencyCode
+          )}
           {/* {product.compareAtPrice && (
-            <span className="line-through opacity-30">${Number(product.compareAtPrice.amount)}</span>
+            <span className="line-through opacity-30">
+              ${Number(product.compareAtPrice.amount)}
+            </span>
           )} */}
         </div>
         <Suspense
@@ -81,7 +89,10 @@ export function FeaturedProductLabel({
           {product.title}
         </Link>
         <div className="flex gap-2 items-center text-base font-semibold">
-          {/* ${Number(product.priceRange.minVariantPrice.amount)} */}
+          {formatPrice(
+            product.priceRange.minVariantPrice.amount,
+            product.priceRange.minVariantPrice.currencyCode
+          )}
           {/* {product.compareAtPrice && (
             <span className="text-sm line-through opacity-30">${Number(product.compareAtPrice.amount)}</span>
           )} */}

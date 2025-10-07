@@ -111,7 +111,6 @@ function adaptCart(supabaseCart: FormattedCart | null): Cart | null {
 
 async function getOrCreateCartId(): Promise<string> {
   let cartId = (await cookies()).get("cartId")?.value;
-  console.log(cartId);
   if (cartId) {
     const { data: supabaseCartID } = await supabase
       .from("carts")
