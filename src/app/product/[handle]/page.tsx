@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { DesktopGallery } from "./components/desktop-gallery";
+import { MobileGallerySlider } from "./components/mobile-gallery-slider";
 import { VariantSelectorSlots } from "./components/variant-selector-slots";
 
 // Generate static params for all products at build time
@@ -122,9 +123,9 @@ export default async function ProductPage(props: {
 
       <div className="flex flex-col md:grid md:grid-cols-12 md:gap-sides min-h-max">
         <div className="md:hidden col-span-full h-[60vh] min-h-[400px]">
-          {/* <Suspense fallback={null}>
+          <Suspense fallback={null}>
             <MobileGallerySlider product={product} />
-          </Suspense> */}
+          </Suspense>
         </div>
 
         <div className="flex sticky top-0 flex-col col-span-5 2xl:col-span-4 max-md:col-span-full md:h-screen min-h-max max-md:p-sides md:pl-sides md:pt-top-spacing max-md:static">

@@ -4,9 +4,9 @@ import CartModal from "@/components/cart/modal";
 import { Collection } from "@/lib/ecommerce/types-sample";
 import { NavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogoSvg } from "./logo-svg";
 import MobileMenu from "./mobile-menu";
 
 export const navItems: NavItem[] = [
@@ -16,7 +16,7 @@ export const navItems: NavItem[] = [
   },
   {
     label: "featured",
-    href: "/shop/frontpage",
+    href: "/shop/featured",
   },
   {
     label: "shop all",
@@ -37,7 +37,8 @@ export function Header({ collections }: HeaderProps) {
         <MobileMenu collections={collections} />
       </div>
       <Link href="/" className="md:col-span-3 xl:col-span-2" prefetch>
-        <LogoSvg className="w-auto h-6 max-md:place-self-center md:w-full md:h-auto max-w-96" />
+        {/* <LogoSvg className="w-auto h-6 max-md:place-self-center md:w-full md:h-auto max-w-96" /> */}
+        <Image src="/forli-logo.png" alt="Logo" width={120} height={24} />
       </Link>
       <nav className="flex gap-2 justify-end items-center md:col-span-9 xl:col-span-10">
         <ul className="items-center gap-5 py-0.5 px-3 bg-background/10 rounded-sm backdrop-blur-md hidden md:flex">

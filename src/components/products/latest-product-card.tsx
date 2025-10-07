@@ -20,11 +20,7 @@ export function LatestProductCard({
   if (principal) {
     return (
       <div className={cn("min-h-fold flex flex-col relative", className)}>
-        <Link
-          href={`/product/${product.handle}`}
-          className="size-full flex-1 flex flex-col"
-          prefetch
-        >
+        <div className="size-full flex-1 flex flex-col relative">
           <Image
             priority
             src={product.featuredImage.url}
@@ -34,10 +30,15 @@ export function LatestProductCard({
             quality={100}
             className="object-cover size-full flex-1"
           />
-        </Link>
+          <Link
+            href={`/product/${product.handle}`}
+            prefetch
+            className="absolute inset-0"
+          />
+        </div>
         <div className="absolute bottom-0 left-0 grid w-full grid-cols-4 gap-6 pointer-events-none max-md:contents p-sides">
           <FeaturedProductLabel
-            className="col-span-3 col-start-2 pointer-events-auto 2xl:col-start-3 2xl:col-span-2 shrink-0"
+            className="col-span-3 col-start-2 pointer-events-auto 2xl:col-start-3 2xl:col-span-2 shrink-0 border border-foreground"
             product={product}
             principal
           />

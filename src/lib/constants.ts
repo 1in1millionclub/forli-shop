@@ -2,18 +2,18 @@ import { Collection } from "./ecommerce/types-sample";
 import { NavItem } from "./types";
 
 export const collections: Collection[] = [
-  {
-    handle: "summer-essentials",
-    title: "Summer Essentials",
-    description: "Everything you need for the perfect summer.",
-    seo: {
-      title: "Shop Summer Essentials",
-      description: "Browse our curated summer essentials collection.",
-    },
-    parentCategoryTree: [{ id: "cat1", name: "Seasonal" }],
-    updatedAt: "2025-09-01T12:00:00Z",
-    path: "/collections/summer-essentials",
-  },
+  // {
+  //   handle: "summer-essentials",
+  //   title: "Summer Essentials",
+  //   description: "Everything you need for the perfect summer.",
+  //   seo: {
+  //     title: "Shop Summer Essentials",
+  //     description: "Browse our curated summer essentials collection.",
+  //   },
+  //   parentCategoryTree: [{ id: "cat1", name: "Seasonal" }],
+  //   updatedAt: "2025-09-01T12:00:00Z",
+  //   path: "/collections/summer-essentials",
+  // },
   {
     handle: "new-arrivals",
     title: "New Arrivals",
@@ -49,17 +49,17 @@ export const TAGS = {
 };
 
 export const CONTACT_LINKS: NavItem[] = [
-  {
-    label: "37°47'33.4\"N 122°24'18.6\"W",
-    href: "https://maps.app.goo.gl/MnpbPDEHxoDydc9M9",
-  },
-  {
-    label: "(269) 682-1402",
-    href: "https://joyco.studio/showcase",
-  },
+  // {
+  //   label: "37°47'33.4\"N 122°24'18.6\"W",
+  //   href: "https://maps.app.goo.gl/MnpbPDEHxoDydc9M9",
+  // },
+  // {
+  //   label: "(269) 682-1402",
+  //   href: "https://joyco.studio/showcase",
+  // },
   {
     label: "Instagram",
-    href: "https://www.instagram.com/joyco.studio/",
+    href: "https://www.instagram.com/forli.1in1m/",
   },
 ];
 

@@ -51,7 +51,7 @@ function transformSupabaseMoney(
 ): Money {
   return {
     amount: supabaseMoney?.amount || "0",
-    currencyCode: supabaseMoney?.currencyCode || "USD",
+    currencyCode: supabaseMoney?.currencyCode || "INR",
   };
 }
 
