@@ -64,7 +64,7 @@ function formatProduct(product: ProductsWithRelations[0]): FormattedProduct {
     },
     compareAtPriceRange: {
       minVariantPrice: {
-        amount: product.product_variants[0]?.price.toString(), // Not in your schema, so defaulting
+        amount: product.product_variants[0]?.price.toString(),
         currencyCode: product.product_variants[0]?.currency_code || "INR",
       },
     },
@@ -79,7 +79,7 @@ function formatProduct(product: ProductsWithRelations[0]): FormattedProduct {
         },
         selectedOptions: variant.variant_selected_options,
       })
-    ), // Simplified for now
+    ),
     currencyCode: product.product_variants[0]?.currency_code || "INR",
     seo: {
       title: product.title,
@@ -103,9 +103,43 @@ function formatCollection(collection: Collections[0]): FormattedCollection {
   };
 }
 
+// Calculate cart totals from line items
+function calculateCartTotals(cartItems: CreateCartMutation["cart_items"]) {
+  let subtotal = 0;
+  const currencyCode = cartItems[0]?.product_variants?.currency_code || "INR";
+
+  for (const item of cartItems) {
+    const price = Number(item.product_variants?.price || 0);
+    const quantity = item.quantity;
+    subtotal += price * quantity;
+  }
+
+  // You can add tax calculation logic here if needed
+  const taxAmount = 0; // Calculate based on your business logic
+  const totalAmount = subtotal + taxAmount;
+
+  return {
+    subtotalAmount: {
+      amount: subtotal.toFixed(2),
+      currencyCode,
+    },
+    totalAmount: {
+      amount: totalAmount.toFixed(2),
+      currencyCode,
+    },
+    totalTaxAmount: {
+      amount: taxAmount.toFixed(2),
+      currencyCode,
+    },
+  };
+}
+
 // Helper to transform Supabase cart data to Shopify-like structure
 function formatCart(cart: CreateCartMutation): FormattedCart | null {
   if (!cart) return null;
+
+  // Calculate totals on the fly
+  const calculatedCost = calculateCartTotals(cart.cart_items);
 
   return {
     id: cart.id,
@@ -154,20 +188,7 @@ function formatCart(cart: CreateCartMutation): FormattedCart | null {
         })
       ),
     },
-    cost: {
-      totalAmount: {
-        amount: cart.total_amount?.toString() || "0.00",
-        currencyCode: "INR", // Assuming INR or get from product data
-      },
-      subtotalAmount: {
-        amount: cart.subtotal_amount?.toString() || "0.00",
-        currencyCode: "INR",
-      },
-      totalTaxAmount: {
-        amount: cart.total_tax_amount?.toString() || "0.00",
-        currencyCode: "INR",
-      },
-    },
+    cost: calculatedCost,
   };
 }
 
@@ -345,16 +366,35 @@ export async function addCartLines(
   cartId: string,
   lines: Array<{ merchandiseId: string; quantity: number }>
 ) {
-  const items = lines.map((line) => ({
-    cart_id: cartId,
-    variant_id: line.merchandiseId,
-    quantity: line.quantity,
-  }));
-  const { error } = await supabase.from("cart_items").insert(items);
+  for (const line of lines) {
+    // First, try to get existing quantity
+    const { data: existing } = await supabase
+      .from("cart_items")
+      .select("quantity")
+      .eq("cart_id", cartId)
+      .eq("variant_id", line.merchandiseId)
+      .single();
 
-  if (error) {
-    console.error("Supabase addCartLines error:", error);
-    throw error;
+    const newQuantity = existing
+      ? existing.quantity + line.quantity
+      : line.quantity;
+
+    // Upsert with the calculated quantity
+    const { error } = await supabase.from("cart_items").upsert(
+      {
+        cart_id: cartId,
+        variant_id: line.merchandiseId,
+        quantity: newQuantity,
+      },
+      {
+        onConflict: "cart_id,variant_id",
+      }
+    );
+
+    if (error) {
+      console.error("Supabase addCartLines upsert error:", error);
+      throw error;
+    }
   }
 
   // Re-fetch the updated cart to return the full object

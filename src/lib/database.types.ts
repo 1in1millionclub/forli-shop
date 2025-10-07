@@ -168,27 +168,27 @@ export type Database = {
       }
       collections: {
         Row: {
-          description: string | null
+          description: string
           handle: string
           id: string
-          image_alt_text: string | null
-          image_url: string | null
+          image_alt_text: string
+          image_url: string
           title: string
         }
         Insert: {
-          description?: string | null
+          description: string
           handle: string
           id?: string
-          image_alt_text?: string | null
-          image_url?: string | null
+          image_alt_text: string
+          image_url: string
           title: string
         }
         Update: {
-          description?: string | null
+          description?: string
           handle?: string
           id?: string
-          image_alt_text?: string | null
-          image_url?: string | null
+          image_alt_text?: string
+          image_url?: string
           title?: string
         }
         Relationships: []
@@ -408,7 +408,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      upsert_cart_item: {
+        Args: { p_cart_id: string; p_quantity: number; p_variant_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

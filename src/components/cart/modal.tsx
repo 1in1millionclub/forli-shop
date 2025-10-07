@@ -29,7 +29,6 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
   const { cart } = useCart();
 
   if (!cart) return <></>;
-
   return (
     <div className="flex flex-col justify-between h-full overflow-hidden">
       <CartContainer className="flex justify-between text-sm text-muted-foreground">
@@ -38,12 +37,14 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
       </CartContainer>
       <div className="relative flex-1 min-h-0 py-4 overflow-x-hidden">
         <CartContainer className="overflow-y-auto flex flex-col gap-y-3 h-full scrollbar-hide">
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {cart.lines.map((item) => (
               <motion.div
                 key={item.id}
                 layout
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <CartItemCard item={item} onCloseCart={closeCart} />
@@ -64,12 +65,17 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
           </div>
           <div className="flex justify-between items-center pt-1 pb-1 mb-1.5 text-lg font-semibold">
             <p>Total</p>
-            <p className="text-base text-right text-foreground">
+            <motion.p
+              key={cart.cost.totalAmount.amount}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-base text-right text-foreground"
+            >
               {formatPrice(
                 cart.cost.totalAmount.amount,
                 cart.cost.totalAmount.currencyCode
               )}
-            </p>
+            </motion.p>
           </div>
         </div>
         <CheckoutButton />
@@ -91,6 +97,7 @@ export default function CartModal() {
   const { isPending, cart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const serializedCart = useRef(cart ? serializeCart(cart) : undefined);
+  const previousCartLength = useRef(cart?.lines.length || 0);
 
   useBodyScrollLock(isOpen);
 
@@ -98,17 +105,27 @@ export default function CartModal() {
     if (!cart || isPending) return;
 
     const newSerializedCart = serializeCart(cart);
+    const currentLength = cart.lines.length;
 
     // Initialize on first load
     if (serializedCart.current === undefined) {
       serializedCart.current = newSerializedCart;
+      previousCartLength.current = currentLength;
       return;
     }
 
-    // Only open cart if items were actually added/changed
-    if (serializedCart.current !== newSerializedCart) {
+    // Only open cart if items were actually added (length increased)
+    if (
+      serializedCart.current !== newSerializedCart &&
+      currentLength > previousCartLength.current
+    ) {
       serializedCart.current = newSerializedCart;
+      previousCartLength.current = currentLength;
       setIsOpen(true);
+    } else {
+      // Just update the refs without opening
+      serializedCart.current = newSerializedCart;
+      previousCartLength.current = currentLength;
     }
   }, [cart, isPending]);
 
@@ -169,7 +186,15 @@ export default function CartModal() {
         className="uppercase"
         size={"sm"}
       >
-        <span className="max-md:hidden">cart</span> ({cart?.totalQuantity || 0})
+        <span className="max-md:hidden">cart</span>
+        <motion.span
+          key={cart?.totalQuantity || 0}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          ({cart?.totalQuantity || 0})
+        </motion.span>
       </Button>
       <AnimatePresence>
         {isOpen && (

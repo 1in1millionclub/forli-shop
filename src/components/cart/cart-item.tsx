@@ -47,6 +47,7 @@ export function CartItemCard({ item, onCloseCart }: CartItemProps) {
   const colorOption = item.merchandise.selectedOptions.find(
     (option: { name: string }) => option.name.toLowerCase() === "color"
   );
+  // console.log(item.merchandise);
 
   const imgs = useProductImages(
     item.merchandise.product,
@@ -74,12 +75,7 @@ export function CartItemCard({ item, onCloseCart }: CartItemProps) {
               <ColorSwatch
                 color={(() => {
                   const color = getColorHex(colorOption.value);
-                  return Array.isArray(color)
-                    ? [
-                        { name: colorOption.value, value: color[0] },
-                        { name: colorOption.value, value: color[1] },
-                      ]
-                    : { name: colorOption.value, value: color };
+                  return { name: colorOption.value, value: color };
                 })()}
                 isSelected={false}
                 onColorChange={() => {}} // No-op since this is just for display

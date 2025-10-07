@@ -54,12 +54,8 @@ type CartContextType = UseCartReturn | undefined;
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 function calculateItemCost(quantity: number, price: string): string {
-  return (Number(price) * quantity).toString();
+  return (Number(price) * quantity).toFixed(2);
 }
-
-// removed old updateCartItem helper; logic in reducer now uses nextQuantity directly
-
-// removed createOrUpdateCartItem helper in favor of explicit logic in reducer
 
 function updateCartTotals(
   lines: CartItem[]
@@ -74,9 +70,9 @@ function updateCartTotals(
   return {
     totalQuantity,
     cost: {
-      subtotalAmount: { amount: totalAmount.toString(), currencyCode },
-      totalAmount: { amount: totalAmount.toString(), currencyCode },
-      totalTaxAmount: { amount: "0", currencyCode },
+      subtotalAmount: { amount: totalAmount.toFixed(2), currencyCode },
+      totalAmount: { amount: totalAmount.toFixed(2), currencyCode },
+      totalTaxAmount: { amount: "0.00", currencyCode },
     },
   };
 }
@@ -86,9 +82,9 @@ function createEmptyCart(): Cart {
     id: "",
     checkoutUrl: "",
     cost: {
-      subtotalAmount: { amount: "0", currencyCode: "INR" },
-      totalAmount: { amount: "0", currencyCode: "INR" },
-      totalTaxAmount: { amount: "0", currencyCode: "INR" },
+      subtotalAmount: { amount: "0.00", currencyCode: "INR" },
+      totalAmount: { amount: "0.00", currencyCode: "INR" },
+      totalTaxAmount: { amount: "0.00", currencyCode: "INR" },
     },
     totalQuantity: 0,
     lines: [],
@@ -101,6 +97,8 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
   switch (action.type) {
     case "UPDATE_ITEM": {
       const { merchandiseId, nextQuantity } = action.payload;
+
+      // Filter out items with quantity <= 0
       const updatedLines = currentCart.lines
         .map((item) => {
           if (item.merchandise.id !== merchandiseId) return item;
@@ -128,15 +126,7 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
         .filter(Boolean) as CartItem[];
 
       if (updatedLines.length === 0) {
-        return {
-          ...currentCart,
-          lines: [],
-          totalQuantity: 0,
-          cost: {
-            ...currentCart.cost,
-            totalAmount: { ...currentCart.cost.totalAmount, amount: "0" },
-          },
-        };
+        return createEmptyCart();
       }
 
       return {
@@ -231,11 +221,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           payload: { merchandiseId, nextQuantity },
         });
       });
+
       const fresh = await CartActions.updateItem({
         lineId,
         quantity: nextQuantity,
       });
-      if (fresh) setCart(fresh);
+
+      if (fresh) {
+        setCart(fresh);
+      }
     },
     [updateOptimisticCart]
   );
@@ -243,18 +237,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const add = useCallback(
     async (variant: ProductVariant, product: FormattedProduct) => {
       const previousQuantity =
-        optimisticCart?.lines.find((l) => l.merchandise.id === variant.id)
-          ?.quantity || 0;
+        cart?.lines.find((l) => l.merchandise.id === variant.id)?.quantity || 0;
+
       startTransition(() => {
         updateOptimisticCart({
           type: "ADD_ITEM",
           payload: { variant, product, previousQuantity },
         });
       });
+
       const fresh = await CartActions.addItem(variant.id);
-      if (fresh) setCart(fresh);
+
+      if (fresh) {
+        setCart(fresh);
+      }
     },
-    [updateOptimisticCart, optimisticCart]
+    [updateOptimisticCart, cart]
   );
 
   const value = useMemo<UseCartReturn>(

@@ -2,8 +2,9 @@
 
 import { useSelectedVariant } from "@/components/products/variant-selector";
 import { FormattedProduct, ProductVariant } from "@/lib/ecommerce/types-sample";
-import { AnimatePresence, motion } from "framer-motion";
+// import { getShopifyProductId } from "@/lib/shopify/utils";
 import { PlusCircleIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ReactNode, useMemo, useTransition } from "react";
 import { Button, ButtonProps } from "../ui/button";
@@ -161,9 +162,7 @@ export function AddToCart({
   const resolvedVariant = useMemo(() => {
     if (hasNoVariants) return getBaseProductVariant(product);
     if (!isTargetingProduct && !defaultVariantId) return undefined;
-    return variants.find(
-      (variant: ProductVariant) => variant.id === selectedVariantId
-    );
+    return variants.find((variant) => variant.id === selectedVariantId);
   }, [
     hasNoVariants,
     product,
