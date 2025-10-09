@@ -8,7 +8,7 @@ export default async function Page({
   const params = await searchParams;
 
   return (
-    <Card>
+    <Card className="bg-white text-black p-6 text-center">
       <CardHeader>
         <CardTitle className="text-2xl">Sorry, something went wrong.</CardTitle>
       </CardHeader>

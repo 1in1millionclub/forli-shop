@@ -10,18 +10,25 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 export default function ResetPasswordForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
-
+  useEffect(() => {
+    async function checkAuth() {
+      const claims = await supabase.auth.getClaims();
+      if (!claims.data?.claims) {
+        router.push("/auth/login");
+      }
+    }
+    checkAuth();
+  }, [router, supabase]);
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -70,59 +77,55 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <div className="container py-10">
-      <div className={cn("flex flex-col gap-6")}>
-        <Card className="bg-white text-black">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Reset Password</CardTitle>
-            <CardDescription>Enter your new password below</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-6">
-                <div className="grid gap-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="password">New Password</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Updating..." : "Update Password"}
-                  </Button>
-                </div>
+    <Card className="bg-white text-black p-6">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Reset Password</CardTitle>
+        <CardDescription>Enter your new password below</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4">
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="password">New Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            </form>
-            <div className="text-center text-sm">
-              <Link
-                href="/account"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Back to Account
-              </Link>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Updating..." : "Update Password"}
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </form>
+        <div className="text-center text-sm">
+          <Link
+            href="/account"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Back to Account
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -8,7 +8,7 @@ import {
 
 export default function Page() {
   return (
-    <Card>
+    <Card className="bg-white text-black p-6 text-center">
       <CardHeader>
         <CardTitle className="text-2xl">Thank you for signing up!</CardTitle>
         <CardDescription>Check your email to confirm</CardDescription>

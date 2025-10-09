@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -84,110 +83,97 @@ export default function SignUpForm() {
   return (
     <>
       <OneTapComponent />
-      <div className={cn("flex flex-col gap-6")}>
-        <Card className="bg-white text-black">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Create an Account</CardTitle>
-            <CardDescription>
-              Enter your information to create an account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <form onSubmit={handleSocialLogin}>
-              <div className="flex flex-col gap-6">
-                {error && (
-                  <p className="text-sm text-destructive-500">{error}</p>
-                )}
-                <Button
-                  type="submit"
-                  variant={"secondary"}
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  <FcGoogle />
-                  {isLoading ? "Logging in..." : "Continue with Google"}
+      <Card className="bg-white text-black p-6">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Create an Account</CardTitle>
+          <CardDescription>
+            Enter your information to create an account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <form onSubmit={handleSocialLogin}>
+            <div className="flex flex-col gap-6">
+              {error && <p className="text-sm text-destructive-500">{error}</p>}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                <FcGoogle />
+                {isLoading ? "Logging in..." : "Continue with Google"}
+              </Button>
+            </div>
+          </form>
+          <div className="flex items-center gap-2">
+            <div className="h-px bg-gradient-to-l from-accent to-transparent flex-1" />
+            <span className="text-center text-muted-foreground">Or</span>
+            <div className="h-px bg-gradient-to-r from-accent to-transparent flex-1" />
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Your Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  {" "}
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={repeatPassword}
+                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
               </div>
-            </form>
-            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-              <span className="bg-card text-muted-foreground relative z-10 px-2">
-                Or
-              </span>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-6">
-                <div className="grid gap-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder="Your Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    {" "}
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={repeatPassword}
-                      onChange={(e) => setRepeatPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-rose hover:bg-rose/80"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Creating account..." : "Sign Up"}
-                  </Button>
-                </div>
-                <div className="text-center text-sm">
-                  Already have an account?{" "}
-                  <Link
-                    href="/auth/login"
-                    className="underline underline-offset-4"
-                  >
-                    Login
-                  </Link>
-                </div>
+              <div className="text-center text-sm">
+                Already have an account?{" "}
+                <Link
+                  href="/auth/login"
+                  className="underline underline-offset-4"
+                >
+                  Login
+                </Link>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </>
   );
 }
