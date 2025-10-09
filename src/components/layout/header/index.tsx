@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MobileMenu from "./mobile-menu";
+import UserDropdown from "./user-dropdown";
 
 export const navItems: NavItem[] = [
   {
@@ -30,7 +31,6 @@ interface HeaderProps {
 
 export function Header({ collections }: HeaderProps) {
   const pathname = usePathname();
-
   return (
     <header className="grid fixed top-0 left-0 z-50 grid-cols-3 items-start w-full p-sides md:grid-cols-12 md:gap-sides">
       <div className="block flex-none md:hidden">
@@ -47,7 +47,7 @@ export function Header({ collections }: HeaderProps) {
         />
       </Link>
       <nav className="flex gap-2 justify-end items-center md:col-span-9 xl:col-span-10">
-        <ul className="items-center gap-5 py-0.5 px-3 bg-background/10 rounded-sm backdrop-blur-md hidden md:flex">
+        <ul className="items-center gap-5 py-0.5 pl-3 bg-background/10 rounded-sm backdrop-blur-md hidden md:flex">
           {navItems.map((item) => (
             <li key={item.href}>
               <Link
@@ -64,6 +64,7 @@ export function Header({ collections }: HeaderProps) {
               </Link>
             </li>
           ))}
+          <UserDropdown />
         </ul>
         <CartModal />
       </nav>

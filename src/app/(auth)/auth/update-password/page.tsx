@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,11 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function UpdatePasswordForm() {
+  const { resetPasswordUpdate } = useAuth();
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,12 +23,11 @@ export default function UpdatePasswordForm() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await resetPasswordUpdate(password);
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/");

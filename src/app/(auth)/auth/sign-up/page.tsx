@@ -1,6 +1,7 @@
 "use client";
 import type React from "react";
 
+import { useAuth } from "@/components/auth/auth-context";
 import OneTapComponent from "@/components/OneTapLoginComponent";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,17 +13,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 export default function SignUpForm() {
+  const { signUpWithEmail, loginWithGoogle } = useAuth();
   const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,28 +29,14 @@ export default function SignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
-
     setIsLoading(true);
-
     if (password !== repeatPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
-
     try {
-      const { error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            name: name,
-          },
-          emailRedirectTo: `${window.location.origin}`,
-        },
-      });
-
+      const { error } = await signUpWithEmail(email, password, name);
       if (error) throw error;
       router.push("/auth/sign-up-success");
     } catch (error: unknown) {
@@ -62,17 +47,11 @@ export default function SignUpForm() {
   };
   const handleSocialLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/oauth?next=/`,
-        },
-      });
+      const { error } = await loginWithGoogle();
 
       if (error) throw error;
     } catch (error: unknown) {
