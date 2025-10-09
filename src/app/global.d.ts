@@ -16,4 +16,5 @@ declare global {
   type SupabaseProduct = DB["public"]["Tables"]["products"]["Row"];
   type SupabaseVariantSelectedOption =
     DB["public"]["Tables"]["variant_selected_options"]["Row"];
+  type Address = DB["public"]["Tables"]["addresses"]["Row"];
 }

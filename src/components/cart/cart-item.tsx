@@ -23,7 +23,7 @@ type MerchandiseSearchParams = {
 
 interface CartItemProps {
   item: CartItem;
-  onCloseCart: () => void;
+  onCloseCart?: () => void;
 }
 
 export function CartItemCard({ item, onCloseCart }: CartItemProps) {

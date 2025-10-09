@@ -143,7 +143,7 @@ function formatCart(cart: CreateCartMutation): FormattedCart | null {
 
   return {
     id: cart.id,
-    checkoutUrl: cart.checkout_url || "",
+    checkoutUrl: "",
     lines: {
       edges: cart.cart_items.map(
         (item: CreateCartMutation["cart_items"][0]) => ({

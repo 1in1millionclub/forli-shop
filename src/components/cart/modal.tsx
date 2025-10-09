@@ -7,11 +7,9 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, PlusCircleIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useAuth } from "../auth/auth-context";
 import { Button } from "../ui/button";
-import { Loader } from "../ui/loader";
 import { useCart } from "./cart-context";
 import { CartItemCard } from "./cart-item";
 
@@ -27,6 +25,7 @@ const CartContainer = ({
 
 const CartItems = ({ closeCart }: { closeCart: () => void }) => {
   const { cart } = useCart();
+  const { user } = useAuth();
 
   if (!cart) return <></>;
   return (
@@ -78,7 +77,31 @@ const CartItems = ({ closeCart }: { closeCart: () => void }) => {
             </motion.p>
           </div>
         </div>
-        <CheckoutButton />
+
+        <Button
+          type="submit"
+          size="lg"
+          onClick={closeCart}
+          className="flex relative gap-3 justify-between items-center w-full"
+        >
+          <AnimatePresence initial={false} mode="wait">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex justify-center items-center w-full"
+            >
+              <Link
+                href={user ? "/checkout" : "/auth/login?redirect=/checkout"}
+                className="flex justify-between items-center w-full"
+              >
+                <span>Proceed to Checkout</span>
+                <ArrowRight className="size-6" />
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+        </Button>
       </CartContainer>
     </div>
   );
@@ -238,50 +261,5 @@ export default function CartModal() {
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function CheckoutButton() {
-  const { pending } = useFormStatus();
-  const { cart, isPending } = useCart();
-  const router = useRouter();
-
-  const checkoutUrl = cart?.checkoutUrl;
-
-  const isLoading = pending;
-  const isDisabled = !checkoutUrl || isPending;
-
-  return (
-    <Button
-      type="submit"
-      disabled={isDisabled}
-      size="lg"
-      className="flex relative gap-3 justify-between items-center w-full"
-      onClick={() => {
-        if (checkoutUrl) {
-          router.push(checkoutUrl);
-        }
-      }}
-    >
-      <AnimatePresence initial={false} mode="wait">
-        <motion.div
-          key={isLoading ? "loading" : "content"}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="flex justify-center items-center w-full"
-        >
-          {isLoading ? (
-            <Loader size="default" />
-          ) : (
-            <div className="flex justify-between items-center w-full">
-              <span>Proceed to Checkout</span>
-              <ArrowRight className="size-6" />
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </Button>
   );
 }

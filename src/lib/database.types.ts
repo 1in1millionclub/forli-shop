@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          address_line1: string
+          address_line2: string | null
+          city: string
+          country: string
+          created_at: string
+          id: number
+          is_default: boolean
+          name: string
+          phone: string
+          postal_code: string
+          state: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address_line1: string
+          address_line2?: string | null
+          city: string
+          country: string
+          created_at?: string
+          id?: number
+          is_default?: boolean
+          name: string
+          phone: string
+          postal_code: string
+          state: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address_line1?: string
+          address_line2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          id?: number
+          is_default?: boolean
+          name?: string
+          phone?: string
+          postal_code?: string
+          state?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           cart_id: string | null
@@ -55,39 +111,38 @@ export type Database = {
       }
       carts: {
         Row: {
-          checkout_url: string | null
           created_at: string | null
           id: string
-          shipping_amount: number | null
-          subtotal_amount: number | null
-          total_amount: number | null
+          status: string | null
           total_quantity: number | null
-          total_tax_amount: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          checkout_url?: string | null
           created_at?: string | null
           id?: string
-          shipping_amount?: number | null
-          subtotal_amount?: number | null
-          total_amount?: number | null
+          status?: string | null
           total_quantity?: number | null
-          total_tax_amount?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          checkout_url?: string | null
           created_at?: string | null
           id?: string
-          shipping_amount?: number | null
-          subtotal_amount?: number | null
-          total_amount?: number | null
+          status?: string | null
           total_quantity?: number | null
-          total_tax_amount?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "carts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       categories: {
         Row: {
@@ -192,6 +247,169 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      invoices: {
+        Row: {
+          discount_amount: number | null
+          due_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string | null
+          order_id: string | null
+          pdf_url: string | null
+          status: string | null
+          tax_amount: number | null
+          total: number
+        }
+        Insert: {
+          discount_amount?: number | null
+          due_at?: string | null
+          id?: string
+          invoice_number: string
+          issued_at?: string | null
+          order_id?: string | null
+          pdf_url?: string | null
+          status?: string | null
+          tax_amount?: number | null
+          total: number
+        }
+        Update: {
+          discount_amount?: number | null
+          due_at?: string | null
+          id?: string
+          invoice_number?: string
+          issued_at?: string | null
+          order_id?: string | null
+          pdf_url?: string | null
+          status?: string | null
+          tax_amount?: number | null
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string | null
+          price: number
+          quantity: number
+          total_amount: number
+          variant_id: string | null
+        }
+        Insert: {
+          id?: string
+          order_id?: string | null
+          price: number
+          quantity: number
+          total_amount: number
+          variant_id?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string | null
+          price?: number
+          quantity?: number
+          total_amount?: number
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          billing_address_id: number | null
+          contact_email: string
+          contact_phone: string
+          created_at: string
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
+          shipping_address: string
+          shipping_address_id: number | null
+          shipping_status: Database["public"]["Enums"]["shipping_status"] | null
+          status: string
+          total: number
+          user_id: string | null
+        }
+        Insert: {
+          billing_address_id?: number | null
+          contact_email: string
+          contact_phone: string
+          created_at?: string
+          id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          shipping_address: string
+          shipping_address_id?: number | null
+          shipping_status?:
+            | Database["public"]["Enums"]["shipping_status"]
+            | null
+          status?: string
+          total: number
+          user_id?: string | null
+        }
+        Update: {
+          billing_address_id?: number | null
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          shipping_address?: string
+          shipping_address_id?: number | null
+          shipping_status?:
+            | Database["public"]["Enums"]["shipping_status"]
+            | null
+          status?: string
+          total?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_billing_address_id_fkey"
+            columns: ["billing_address_id"]
+            isOneToOne: false
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shipping_address_id_fkey"
+            columns: ["shipping_address_id"]
+            isOneToOne: false
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_images: {
         Row: {
@@ -374,6 +592,90 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["roles"]
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["roles"]
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["roles"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json | null
+          order_id: string
+          payment_gateway: string | null
+          payment_id: string | null
+          payment_method: string | null
+          razorpay_order_id: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          order_id: string
+          payment_gateway?: string | null
+          payment_id?: string | null
+          payment_method?: string | null
+          razorpay_order_id?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string
+          payment_gateway?: string | null
+          payment_id?: string | null
+          payment_method?: string | null
+          razorpay_order_id?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       variant_selected_options: {
         Row: {
           id: string
@@ -408,13 +710,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      upsert_cart_item: {
-        Args: { p_cart_id: string; p_quantity: number; p_variant_id: string }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_method: "razorpay" | "cod"
+      payment_status: "paid" | "pending" | "failed"
+      roles: "admin" | "customer"
+      shipping_status: "pending" | "shipped" | "delivered"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -541,6 +843,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      payment_method: ["razorpay", "cod"],
+      payment_status: ["paid", "pending", "failed"],
+      roles: ["admin", "customer"],
+      shipping_status: ["pending", "shipped", "delivered"],
+    },
   },
 } as const

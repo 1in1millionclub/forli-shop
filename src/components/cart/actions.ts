@@ -212,3 +212,24 @@ export async function getCart(): Promise<Cart | null> {
     return null;
   }
 }
+export async function clearCart(cartId: string) {
+  if (!cartId) return null;
+
+  await supabase.from("cart_items").delete().eq("cart_id", cartId);
+  await supabase
+    .from("carts")
+    .update({ total_quantity: 0, subtotal: 0, total_amount: 0 })
+    .eq("id", cartId);
+
+  // Return empty cart or new state
+  return {
+    id: cartId,
+    totalQuantity: 0,
+    cost: {
+      subtotalAmount: { amount: "0.00", currencyCode: "INR" },
+      totalAmount: { amount: "0.00", currencyCode: "INR" },
+      totalTaxAmount: { amount: "0.00", currencyCode: "INR" },
+    },
+    lines: [],
+  };
+}

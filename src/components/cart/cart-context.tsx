@@ -26,6 +26,9 @@ type CartAction =
       payload: { merchandiseId: string; nextQuantity: number };
     }
   | {
+      type: "CLEAR_CART";
+    }
+  | {
       type: "ADD_ITEM";
       payload: {
         variant: ProductVariant;
@@ -47,6 +50,7 @@ type UseCartReturn = {
     nextQuantity: number,
     updateType: UpdateType
   ) => Promise<void>;
+  clearCart: () => Promise<void>;
 };
 
 type CartContextType = UseCartReturn | undefined;
@@ -194,6 +198,10 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
         lines: updatedLines,
       };
     }
+    case "CLEAR_CART": {
+      return createEmptyCart();
+    }
+
     default:
       return currentCart;
   }
@@ -212,6 +220,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (cart) setCart(cart);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(cart);
+  }, [cart]);
 
   const update = useCallback(
     async (lineId: string, merchandiseId: string, nextQuantity: number) => {
@@ -254,15 +266,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     [updateOptimisticCart, cart]
   );
+  const clearCart = useCallback(async () => {
+    startTransition(() => {
+      setCart(createEmptyCart());
+      updateOptimisticCart({ type: "CLEAR_CART" }); // you can create a new action type if needed
+    });
+
+    await CartActions.clearCart(cart?.id || ""); // implement this server action to clear cart in backend
+  }, [updateOptimisticCart, cart?.id]);
 
   const value = useMemo<UseCartReturn>(
     () => ({
       cart: optimisticCart,
       addItem: add,
       updateItem: update,
+      clearCart,
       isPending,
     }),
-    [optimisticCart, add, update, isPending]
+    [optimisticCart, add, update, isPending, clearCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
