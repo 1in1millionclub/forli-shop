@@ -1,12 +1,12 @@
 "use client";
 
+import { Card } from "@/components/ui/card";
 import {
   FormattedCollection,
   FormattedProduct,
 } from "@/lib/ecommerce/types-sample";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { useEffect, useMemo } from "react";
-import { Card } from "../../../components/ui/card";
 import { useProducts } from "../providers/products-provider";
 import { ProductCard } from "./product-card";
 import { ProductGrid } from "./product-grid";

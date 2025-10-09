@@ -47,7 +47,6 @@ export function CartItemCard({ item, onCloseCart }: CartItemProps) {
   const colorOption = item.merchandise.selectedOptions.find(
     (option: { name: string }) => option.name.toLowerCase() === "color"
   );
-  // console.log(item.merchandise);
 
   const imgs = useProductImages(
     item.merchandise.product,
